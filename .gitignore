@@ -18,3 +18,7 @@ bld/
 .vs/
 
 [Aa]pp[Ss]ettings.*.json
+
+# Project folders
+.dist/
+.sonar/
