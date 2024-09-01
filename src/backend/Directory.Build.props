@@ -1,0 +1,51 @@
+<Project>
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SonarAnalyzer.CSharp">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <Choose>
+    <When Condition="$([System.Text.RegularExpressions.Regex]::IsMatch($(MSBuildProjectFile), '^*[Tt]est(.*).csproj'))">
+      <!-- When a project name contains [T|t]est[s] -->
+      <PropertyGroup>
+        <IsPackable>false</IsPackable>
+        <IsTestProject>true</IsTestProject>
+      </PropertyGroup>
+      <ItemGroup>
+        <PackageReference Include="Microsoft.CodeAnalysis.Analyzers">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" />
+        <PackageReference Include="Bogus" />
+        <PackageReference Include="coverlet.collector">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="FluentAssertions" />
+        <PackageReference Include="NSubstitute" />
+        <PackageReference Include="Xunit" />
+        <PackageReference Include="xunit.runner.visualstudio">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <Using Include="Bogus" />
+        <Using Include="FluentAssertions" />
+        <Using Include="NSubstitute" />
+        <Using Include="System.ComponentModel" />
+        <Using Include="Application.Data" />
+        <Using Include="Xunit" />
+      </ItemGroup>
+    </When>
+  </Choose>
+</Project>

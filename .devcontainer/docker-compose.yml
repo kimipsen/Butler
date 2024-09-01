@@ -1,0 +1,76 @@
+version: '3'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    volumes:
+      - ../..:/workspaces:cached
+
+    # Overrides default command so things don't shut down after the process ends.
+    command: sleep infinity
+
+    # Runs app on the same network as the database container, allows "forwardPorts" in devcontainer.json function.
+    network_mode: service:db
+
+    # Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+    # user: root
+
+    # Use "forwardPorts" in **devcontainer.json** to forward an app port locally.
+    # (Adding the "ports" property to this file will not forward from a Codespace.)
+
+ # postgresql server
+  db:
+    labels:
+      - dk.ufs.optagelse.service="PostgreSQL"
+    image: postgres:16
+    restart: unless-stopped
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./postgres/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-postgres}
+
+  # pgAdmin til at administrere/vise data
+  pgadmin:
+    labels:
+      - dk.ufs.optagelse.service="pgAdmin 4"
+    image: dpage/pgadmin4:8
+    depends_on:
+      - db
+    ports:
+      - 5050:80
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+    volumes:
+      - ./pgadmin4/servers.json:/pgadmin4/servers.json
+      - ./pgadmin4/config_local.py:/pgadmin4/config_local.py 
+
+  # smtp server som opfanger mails og udstiller i web interface
+  mailpit:
+    labels:
+      - dk.ufs.optagelse.service="MailPit (dev-smtp)"
+    image: axllent/mailpit:latest
+    volumes:
+      - mailpit-data:/data
+    ports:
+      - 8025:8025
+      - 1025:1025
+    environment:
+      MP_MAX_MESSAGES: 5000
+      MP_DATA_FILE: /data/mailpit.db
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+
+    # Add "forwardPorts": ["db:1433"] to **devcontainer.json** to forward MSSQL locally.
+    # (Adding the "ports" property to this file will not forward from a Codespace.)
+
+volumes:
+  postgres-data:
+  node_modules:
+  mailpit-data:

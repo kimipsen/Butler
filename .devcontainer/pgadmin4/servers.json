@@ -1,0 +1,14 @@
+{ 
+  "Servers": {
+    "default": {
+      "Name": "Butler-dev",
+      "Group": "Servers",
+      "Port": 5432,
+      "Username": "butler-user",
+      "Host": "db",
+      "SSLMode": "prefer",
+      "MaintenanceDB": "postgres",
+      "PassFile": "/.pgpass"
+    }
+  }
+}
